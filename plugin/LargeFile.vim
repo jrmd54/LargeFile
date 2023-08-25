@@ -43,6 +43,11 @@ fun! s:LargeFile(force,fname)
   let fsz= getfsize(a:fname)
 "  call Decho("fsz=".fsz)
   if a:force || fsz >= g:LargeFile*1024*1024 || fsz <= -2
+   if exists(':GitGutterBufferDisable') > 0
+    " on large files, gitgutter plugin can cause files to completely freeze; disabling it by default
+    " (issue seen on file with > 1 million lines, with diff of 200K lines)
+    execute 'GitGutterBufferDisable'
+   endif
    sil! call s:ParenMatchOff()
    syn clear
    let b:LF_bhkeep      = &l:bh
